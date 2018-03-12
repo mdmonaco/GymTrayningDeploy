@@ -1,0 +1,119 @@
+<section>
+  <div class="page-header">
+    <h1>Usuario <span ng-bind="vm.user.displayName"></span></h1>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.userForm" ng-submit="vm.update(vm.userForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label for="firstName">Nombre</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" ng-model="vm.user.firstName" placeholder="nombre" required autofocus>
+          <div ng-messages="vm.userForm.firstName.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El nombre es requerido.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="lastName">Apellido</label>
+          <input type="text" id="lastName" name="lastName" class="form-control" ng-model="vm.user.lastName" placeholder="apellido" required>
+          <div ng-messages="vm.userForm.lastName.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El apellido es requerido.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-control" ng-model="vm.user.email" placeholder="Email" lowercase required>
+          <div ng-messages="vm.userForm.email.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El Email es requerido.</p>
+            <p class="help-block error-text" ng-message="email">La direccion de Email es invalida.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" name="dni" class="form-control" ng-model="vm.user.dni" ng-pattern="vm.dniRegex" placeholder="dni" lowercase required>
+          <div ng-messages="vm.userForm.dni.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El DNI es requerido.</p>
+            <p class="help-block error-text" ng-message="pattern">El numero de documento no es correcto, por favor ingrese un numero de documento valido</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="phone">Telefono</label>
+          <input type="text" id="phone" name="phone" class="form-control" ng-model="vm.user.phone" placeholder="telefono" size= lowercase>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="birDate">Fecha Nacimiento</label>
+          <input type="date" id="dateBir" name="birDate" class="form-control" ng-model="vm.user.birDate" size= lowercase required>
+          <div ng-messages="vm.userForm.birDate.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">La Fecha de Nacimiento es requerida.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label for="gender">Sexo</label></br>
+          <form action="">
+            <input type="radio" id="gender" name="gender" ng-model="vm.user.gender" value="hombre" required>Hombre<br>
+            <input type="radio" id="gender" name="gender" ng-model="vm.user.gender" value="Mujer" required>Mujer<br>
+          </form>
+          <div ng-messages="vm.userForm.gender.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El sexo es requerido.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors ng-show=showRoles>
+          <label for="roles">Rol</label>
+          <select name="roles" id="roles" name="roles" class="form-control" ng-model="vm.user.roles" ng-list size= lowercase ng-required="showRoles" ng-change="CheckVissibleInputs()">
+            <option value="">--- Seleccionar ---</option>
+            <option value="admin">Admin</option>
+            <option value="user">Empleado</option>
+            <option value="client">Cliente</option>
+          </select>
+          <div ng-messages="vm.userForm.roles.$error.ng-required" role="alert">
+            <p class="help-block error-text">Al menos un rol es requerido.</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors ng-show=vissibleAdmin class="ng-hide">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" name="username" class="form-control" ng-model="vm.user.username" ng-pattern="vm.usernameRegex" placeholder="usuario" lowercase ng-required="vissibleAdmin">
+          <!--<div ng-messages="vm.userForm.username.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">El usuario es requerido.</p>
+            <p class="help-block error-text" ng-message="pattern">Ingrese un usuario valido: 3+ caracteres, no caracteres especiales, sin puntos consecutivos, que no empiece ni termine con punto, letras de la a-z y numeros de 0-9.</p>
+          </div>-->
+          <div ng-messages="vm.userForm.username.$error.ng-required" role="alert">
+            <p class="help-block error-text">El usuario es requerido.</p>
+            <div ng-messages="vm.userForm.username.$error" role="alert">
+              <p class="help-block error-text" ng-message="pattern">Ingrese un usuario valido: 3+ caracteres, no caracteres especiales, sin puntos consecutivos, que no empiece ni termine con punto, letras de la a-z y numeros de 0-9.</p>
+            </div>    
+          </div>
+        </div>    
+        <div class="form-group" show-errors  ng-show=vissibleAdmin class="ng-hide">
+          <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" class="form-control" ng-model="vm.user.password" placeholder="contraseña" uib-popover="{{vm.getPopoverMsg()}}" popover-trigger="outsideClick" password-validator ng-required="vissibleAdmin">
+          <div ng-messages="vm.userForm.password.$error.ng-required" role="alert">
+            <p class="help-block error-text">La contraseña es requerida.</p>
+            <div ng-repeat="passwordError in passwordErrors">
+              <p class="help-block error-text" ng-show="vm.userForm.password.$error.requirements">{{passwordError}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" show-errors ng-show=vissibleClient class="ng-hide">
+          <label for="discipline">Diciplina</label>
+          <select name="discipline" id="discipline" name="discipline" class="form-control" ng-model="vm.user.discipline" size= lowercase ng-required="vissibleClient">
+            <option value="">--- Seleccionar ---</option>
+            <option ng-repeat="disc in vm.disciplines" value="{{disc._id}}">{{disc.title}}</option>
+          </select>
+          <!--<div ng-messages="vm.userForm.discipline.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">La disciplina es requerida.</p>
+          </div>-->
+          <div ng-messages="vm.userForm.discipline.$error.ng-required" role="alert">
+            <p class="help-block error-text">La disciplina es requerida.</p>
+          </div>
+        </div>
+        <div class="form-group" ng-show="vissibleAdmin && (vm.userForm.password.$error.requirements || vm.userForm.password.$valid)">
+          <label>Password Requirements</label>
+          <uib-progressbar value="requirementsProgress" type="{{requirementsColor}}"><span style="color:white; white-space:nowrap;">{{requirementsProgress}}%</span></uib-progressbar>
+        </div>
+        <div class="text-center form-group">
+          <button type="submit" class="btn btn-primary">Actualizar usuario</button>
+          <button type="button" ng-click="cancel()" class="btn btn-primary">Cancelar</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

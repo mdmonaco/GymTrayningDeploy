@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Historial de Cobros</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="cobro in vm.cobros"
+       ui-sref="cobros.view({ cobroId: cobro._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="cobro.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="cobro.user" ng-bind="cobro.user.displayName"></span>
+        <span ng-if="!cobro.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="cobro.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.cobros.$resolved && !vm.cobros.length">
+    No Cobros yet, why don't you <a ui-sref="cobros.create">create one</a>?
+  </div>
+</section>
